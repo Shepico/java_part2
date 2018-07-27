@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow extends JFrame {
-    private static final int POS_X = 600;
-    private static final int POS_Y = 200;
+    private static final int POS_X = 600; //Начальная координата Х
+    private static final int POS_Y = 200; //Начальная координата У
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 600;
 
