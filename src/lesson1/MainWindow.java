@@ -2,9 +2,11 @@ package lesson1;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MainWindow extends JFrame {
-    private static final int POS_X = 600; //Начальная координата Х
+    private static final int POS_X = 300; //Начальная координата Х
     private static final int POS_Y = 200; //Начальная координата У
     private static final int WINDOW_WIDTH = 800; //ширина окна
     private static final int WINDOW_HEIGHT = 600; //высота окна
@@ -27,16 +29,38 @@ public class MainWindow extends JFrame {
         setTitle("Circles");
 
         GameCanvas gameCanvas = new GameCanvas(this);
-        //colorBgr = new BackgroundColor(gameCanvas);
 
         add(gameCanvas, BorderLayout.CENTER);
         initGame();
+        addMouseListener(new MyMouseListener()); //слушатель
         setVisible(true);  //показали окно
     }
 
     private void initGame() {
         for (int i = 0; i < sprites.length; i++) {
             sprites[i] = new Ball(); //создаем  мячи
+        }
+    }
+
+    private void addBall() {
+        int i;
+        Sprite[] spritesNew = new Sprite[sprites.length+1];
+        for (i = 0; i< sprites.length; i++) {
+            spritesNew[i] = sprites[i];
+        }
+        spritesNew[i] = new Ball();
+        sprites = spritesNew;
+    }
+
+    private void removeBall() {
+        int i;
+        if (sprites.length != 0) {
+            Sprite[] spritesNew = new Sprite[sprites.length - 1];
+            for (i = 0; i < spritesNew.length; i++) {
+                spritesNew[i] = sprites[i];
+            }
+
+            sprites = spritesNew;
         }
     }
 
@@ -56,6 +80,40 @@ public class MainWindow extends JFrame {
     private void render(GameCanvas canvas, Graphics g) {
         for (int i = 0; i < sprites.length; i++) {
             sprites[i].render(canvas, g);
+        }
+    }
+
+    class MyMouseListener implements java.awt.event.MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getButton() == MouseEvent.BUTTON1) { //левая
+                //System.out.println("click left");
+                addBall();
+            }else {
+                //System.out.println("click right");
+                removeBall();
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
         }
     }
 }

@@ -2,6 +2,8 @@ package lesson1;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class GameCanvas extends JPanel {
 
@@ -46,6 +48,7 @@ public class GameCanvas extends JPanel {
     private void setColorBackground() {
        setBackground(BackgroundColor.setColorBackground());
     }
+
 
     public int getLeft() { return 0; }
     public int getRight() { return getWidth() - 1; }
