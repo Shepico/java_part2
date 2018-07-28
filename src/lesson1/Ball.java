@@ -6,7 +6,7 @@ public class Ball extends Sprite {
 
     private float vx = 150 + (float)(Math.random() * 200f);
     private float vy = 150 + (float)(Math.random() * 200f);
-    private final Color color = new Color(
+    private final Color color = new Color(  //цвет RGB
             (int)(Math.random() * 255),
             (int)(Math.random() * 255),
             (int)(Math.random() * 255)
