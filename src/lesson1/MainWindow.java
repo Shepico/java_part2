@@ -37,7 +37,8 @@ public class MainWindow extends JFrame {
     }
 
     private void initGame() {
-        for (int i = 0; i < sprites.length; i++) {
+        sprites[0] = new BackgroundColor();
+        for (int i = 1; i < sprites.length; i++) {
             sprites[i] = new Ball(); //создаем  мячи
         }
     }
@@ -54,7 +55,7 @@ public class MainWindow extends JFrame {
 
     private void removeBall() {
         int i;
-        if (sprites.length != 0) {
+        if (sprites.length != 1) {
             Sprite[] spritesNew = new Sprite[sprites.length - 1];
             for (i = 0; i < spritesNew.length; i++) {
                 spritesNew[i] = sprites[i];
