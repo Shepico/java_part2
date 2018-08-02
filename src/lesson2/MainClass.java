@@ -22,12 +22,15 @@ public class MainClass {
         String[][] strArr = new String[4][4];
         int i = 0;
         int j = -1;
+        //а если дробное?
         int result = 0;
+        //а если не использовать foreach то и не надо было бы выдумывать счётчики
         for (String s1: str.split("\n")){
             for (String s2:s1.split(" ")) {
                 ++j;
                 strArr[i][j] = s2;
             }
+            //эту проверку лучше осуществлять до того как начинаете разбирать посимвольно
             if (j<3) { //не хватает столбца
                 //try {
                     throw new IllegalArgumentException();
@@ -41,6 +44,7 @@ public class MainClass {
             i++;
             j=-1;
         }
+        //думаю это было бы проще проверить с самого начала, ещё не начав разбирать строку на столбцы
         if (i<4) { //не хватает строк
             //try {
                 throw new IllegalArgumentException();
@@ -53,7 +57,7 @@ public class MainClass {
                 //e.printStackTrace();
             }*/
         }
-
+        //такие разнородные действия лучше разделять, потому что мы никогда не можем знать, какое из них понадобится отдельно от другого
        for (i = 0; i < strArr.length; i++) {
             for (j = 0; j < strArr[i].length; j++) {
                 //try {
