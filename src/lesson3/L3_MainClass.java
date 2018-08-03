@@ -8,8 +8,20 @@ public class L3_MainClass {
     public static void main(String[] args){
         taskOne();
 
+        //Задача 2
+        Phonebook pbook = new Phonebook();
+        pbook.get("Петров");
+        pbook.add("Иванов", "+79171332255");
+        pbook.add("Петров", "+79171333377");
+        pbook.add("Сидоров", "+79171334499");
+        pbook.add("Иванов", "+79171335511");
+        pbook.add("Иванов", "+79171332259");
+
+        pbook.get("Иванов");
+
     }
 
+    // Задача 1
     static void taskOne(){
         String[] str = new String[25];
         str = arrCreate(str);
@@ -25,8 +37,8 @@ public class L3_MainClass {
 
     static void uniqueWord(String[] str) {
         HashMap<String, Integer> hashStr = new HashMap<>();
-        for(int i=0;i<str.length; i++){
-            hashStr.put(str[i], (hashStr.get(str[i]) == null) ? 1 : hashStr.get(str[i])+1);
+        for(int i=0; i<str.length; i++){
+           hashStr.put(str[i], (hashStr.get(str[i]) == null) ? 1 : hashStr.get(str[i])+1);
         }
 
         for (HashMap.Entry<String, Integer> pair : hashStr.entrySet())
@@ -36,4 +48,6 @@ public class L3_MainClass {
             System.out.println(key + " : " + value);
         }
     }
+
+    //Конец задачи 1
 }
