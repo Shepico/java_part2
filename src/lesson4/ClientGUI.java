@@ -62,7 +62,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
                     try {
                         sendFile();
                     }catch (IOException er) {
-                        er.printStackTrace();
+                        throw new RuntimeException("Error output");
                     }
                     sendMessage();
                 }
@@ -108,9 +108,11 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             try {
                 sendFile();
             } catch (IOException er) {
-                er.printStackTrace();
+                //er.printStackTrace();
+                throw new RuntimeException("Error output ");
             }
             sendMessage();
+
 
         }else {
             throw new RuntimeException("Unknown source: " + src);
@@ -136,7 +138,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        String msg = "Что то пошло не так";
+        String msg = e.getMessage();
         JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
         System.exit(1);
     }
