@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ServerGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler {
-    private final int POS_X = 1500;
-    private final int POS_Y = 500;
-    private final int WIDTH = 200;
+    private final int POS_X = 800;
+    private final int POS_Y = 400;
+    private final int WIDTH = 250;
     private final int HEIGHT = 100;
 
     private final ChatServer chatServer = new ChatServer();
@@ -32,6 +32,8 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
         setTitle("Chat server");
         setAlwaysOnTop(true);
         setLayout(new GridLayout(1,2));
+        btnStart.addActionListener(this);
+        btnStop.addActionListener(this);
         add(btnStart);
         add(btnStop);
         setVisible(true);
@@ -42,8 +44,10 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
         Object src = e.getSource();
         if (src == btnStart) {
             chatServer.start(8189);
+        //    throw new ArithmeticException();
         }else if (src == btnStop) {
             chatServer.stop();
+            System.exit(0);
         }
 
     }
@@ -52,5 +56,6 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
     public void uncaughtException(Thread t, Throwable e) {
         String msg = "Что то пошло не так";
         JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
     }
 }
