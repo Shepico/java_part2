@@ -126,11 +126,11 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     }
 
     private void sendMessage(){
-        if (LOG.getText().equals("")){
-            LOG.append(tfMessage.getText());
-        }else {
+        //if (LOG.getText().equals("")){ //через LineSeparator сделал
+            LOG.append(tfMessage.getText()+System.lineSeparator());
+        /*}else {
             LOG.append("\n" + tfMessage.getText());
-        }
+        }*/
         tfMessage.setText("");
     }
 
