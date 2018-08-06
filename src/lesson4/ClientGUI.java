@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler {
     private final int WIDTH = 1000;
@@ -27,8 +28,10 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     private final JList<String> userList = new JList();
 
+    private FillLogFile fs;
 
-    public static void main(String[] args){
+
+    public static void main(String[] args) throws IOException{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -37,7 +40,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         });
     }
 
-    private ClientGUI (){
+    private ClientGUI () {
         Thread.setDefaultUncaughtExceptionHandler(this);
         String[] users = {"user1", "user2", "user3"};
         userList.setListData(users);
@@ -56,6 +59,11 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        sendFile();
+                    }catch (IOException er) {
+                        er.printStackTrace();
+                    }
                     sendMessage();
                 }
             }
@@ -82,6 +90,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         add(PANEL_BOTTOM, BorderLayout.SOUTH);
         //
         setVisible(true);
+
     }
 
     @Override
@@ -96,10 +105,23 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
                 LOG.append("\n" + tfMessage.getText());
             }
             tfMessage.setText("");*/
+            try {
+                sendFile();
+            } catch (IOException er) {
+                er.printStackTrace();
+            }
             sendMessage();
+
         }else {
             throw new RuntimeException("Unknown source: " + src);
         }
+
+    }
+
+    private  void sendFile() throws IOException {
+        fs = new FillLogFile();
+        fs.saveFile(tfMessage.getText());
+        fs.close();
 
     }
 
