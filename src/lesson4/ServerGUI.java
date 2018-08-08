@@ -11,9 +11,9 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
     private final int WIDTH = 250;
     private final int HEIGHT = 100;
 
-    private final ChatServer chatServer = new ChatServer();
-    private final JButton btnStart = new JButton("Start");
-    private final JButton btnStop = new JButton("Stop");
+    private final ChatServer CHATSERVER = new ChatServer();
+    private final JButton BTNSTART = new JButton("Start");
+    private final JButton BTNSTOP = new JButton("Stop");
 
     public static void main (String[] args){
         SwingUtilities.invokeLater(new Runnable() {
@@ -32,21 +32,21 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
         setTitle("Chat server");
         setAlwaysOnTop(true);
         setLayout(new GridLayout(1,2));
-        btnStart.addActionListener(this);
-        btnStop.addActionListener(this);
-        add(btnStart);
-        add(btnStop);
+        BTNSTART.addActionListener(this);
+        BTNSTOP.addActionListener(this);
+        add(BTNSTART);
+        add(BTNSTOP);
         setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
         Object src = e.getSource();
-        if (src == btnStart) {
-            chatServer.start(8189);
+        if (src == BTNSTART) {
+            CHATSERVER.start(8189);
         //    throw new ArithmeticException();
-        }else if (src == btnStop) {
-            chatServer.stop();
+        }else if (src == BTNSTOP) {
+            CHATSERVER.stop();
             System.exit(0);
         }
 
