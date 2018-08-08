@@ -20,18 +20,8 @@ public class L5_MainClass {
         L5_MainClass two = new L5_MainClass();
         two.twoMetod();
         //
-        /*System.out.println(one.arr[9000000]);
-        System.out.println(two.arr[9000000]);*/
         System.out.println("Compare arrays: " + one.compareArr(two.arr)); //сравнение массивов
 
-    }
-
-    class OneMetod  implements Runnable{
-
-        @Override
-        public void run() {
-            arr = new float[SIZE];
-        }
     }
 
     void oneMetod() {
@@ -51,7 +41,6 @@ public class L5_MainClass {
         System.arraycopy(this.arr,0, arr1,0, H);
         System.arraycopy(this.arr,0, arr2,0, H);
 
-        //System.out.println(this.arr.length);
         Thread t1 = new Thread(new Runnable(){
 
             @Override
