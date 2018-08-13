@@ -69,6 +69,7 @@ public class L5_MainClass {
 
        //склеить
         try {
+            t1.join();
             t2.join();
             System.arraycopy(arr1,0, this.arr,0, H);
             System.arraycopy(arr2,0,this.arr, H, H);
