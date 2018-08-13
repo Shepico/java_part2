@@ -55,7 +55,7 @@ public class L5_MainClass {
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                int i=5000000;
+                int i=H;
                 for (int j=0; j<arr2.length; j++, i++) {
                     arr2[j] = (float)(arr2[j] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
                 }
