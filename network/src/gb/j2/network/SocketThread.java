@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class SocketThread extends Thread {
-    private final SocketThreadListener listener;
+    private final SocketThreadListener LISTENER;
     private Socket socket;
     private DataOutputStream out;
 
     public SocketThread(SocketThreadListener listener, String name, Socket socket) {
         super(name);
-        this.listener = listener;
+        this.LISTENER = listener;
         this.socket = socket;
         start();
     }
@@ -20,23 +20,23 @@ public class SocketThread extends Thread {
     @Override
     public void run() {
         try {
-            listener.onStartSocketThread(this, socket);
+            LISTENER.onStartSocketThread(this, socket);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            listener.onSocketThreadIsReady(this, socket);
+            LISTENER.onSocketThreadIsReady(this, socket);
             while (!isInterrupted()) {
                 String msg = in.readUTF();
-                listener.onReceiveString(this, socket, msg);
+                LISTENER.onReceiveString(this, socket, msg);
             }
         } catch (IOException e) {
-            listener.onSocketThreadException(this, e);
+            LISTENER.onSocketThreadException(this, e);
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
-                listener.onSocketThreadException(this, e);
+                LISTENER.onSocketThreadException(this, e);
             }
-            listener.onStopSocketThread(this);
+            LISTENER.onStopSocketThread(this);
         }
 
     }
@@ -44,10 +44,10 @@ public class SocketThread extends Thread {
     public boolean sendString(String msg) {
         try {
             out.writeUTF(msg);
-            out.flush();
+            out.flush(); //финализирует выходное состояние, очищая все буферы вывода
             return true;
         } catch (IOException e) {
-            listener.onSocketThreadException(this, e);
+            LISTENER.onSocketThreadException(this, e);
             close();
             return false;
         }
@@ -58,7 +58,7 @@ public class SocketThread extends Thread {
         try {
             socket.close();
         } catch (IOException e) {
-            listener.onSocketThreadException(this, e);
+            LISTENER.onSocketThreadException(this, e);
         }
     }
 }
