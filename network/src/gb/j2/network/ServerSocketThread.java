@@ -6,27 +6,35 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class ServerSocketThread extends Thread {
-    private final int port;
+    private final int PORT;
+    private final int TIMEOUT;
 
-    public ServerSocketThread(String name, int port) {
+    public ServerSocketThread(String name, int port, int timeout) {
         super(name);
-        this.port = port;
+        this.PORT = port;
+        this.TIMEOUT = timeout;
         start();
     }
 
     @Override
     public void run() {
-        System.out.println("Server started");
-        while (!isInterrupted()) {
-            System.out.println("Server socket thread is working");
-            Socket socket;
-            try {
-                sleep(3000);
-            } catch (InterruptedException e) {
-                interrupt();
-                break;
+        System.out.println("Thread started");
+       try (ServerSocket server = new ServerSocket(PORT)){
+           System.out.println("Server started");
+           server.setSoTimeout(TIMEOUT);
+            while (!isInterrupted()){
+                Socket socket;
+                try {
+                    socket = server.accept();
+                }catch (SocketTimeoutException e){
+                    e.printStackTrace();
+                }
+                System.out.println("Client connected");
             }
-            System.out.println("Server stoped");
-        }
+       }catch (IOException e) {
+           e.printStackTrace();
+       }finally {
+           System.out.println("Server stopped");
+       }
     }
 }
