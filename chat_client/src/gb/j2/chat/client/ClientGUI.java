@@ -103,10 +103,8 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
         } else if (src == btnLogin || src == tfIPAddress || src == tfLogin || src == tfPassword || src == tfPort) {
             connect();
-            visiblePanels(true);
         }else if (src == btnDisconnect) {
             disconnect();
-            visiblePanels(false);
         }else if (src == btnSend || src == tfMessage) {
             sendMessage();
         } else {
@@ -122,6 +120,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             log.append("Exception: " + e.getMessage());
         }
         socketThread = new SocketThread(this, "Client thread", socket);
+        visiblePanels(true);
     }
 
     /*
@@ -130,6 +129,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     private void disconnect() {
         socketThread.close();
+        visiblePanels(false);
     }
 
     private void visiblePanels(boolean flagConnect){
