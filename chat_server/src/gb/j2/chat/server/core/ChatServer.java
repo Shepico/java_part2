@@ -13,6 +13,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     private ServerSocketThread server;
     private final DateFormat DATEFORMAT = new SimpleDateFormat("HH:mm:ss: ");
+    private Vector<SocketThread> arrThread = new Vector<>(); //lesson6
 
 
     public void start(int port){
@@ -78,11 +79,13 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public synchronized void onStartSocketThread(SocketThread thread, Socket socket) {
         putLog("Start socket thread");
+        arrThread.add(thread);
     }
 
     @Override
     public synchronized void onStopSocketThread(SocketThread thread) {
         putLog("Stop socket thread");
+        arrThread.remove(thread);//lesson6
     }
 
     @Override
@@ -92,7 +95,16 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     @Override
     public synchronized void onReceiveString(SocketThread thread, Socket socket, String msg) {
-        thread.sendString("echo: " + msg);
+        //lesson6
+        if (arrThread.size() == 0) {
+            thread.sendString("echo: " + msg); //помему не надо, но пусть пока будет
+        }else {
+            for (int i=0; i<arrThread.size(); i++){
+                arrThread.get(i).sendString("for ALL: " + msg);
+            }
+        }
+
+        //thread.sendString("echo: " + msg);
     }
 
     @Override
