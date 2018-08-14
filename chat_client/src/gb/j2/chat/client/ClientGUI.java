@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, SocketThreadListener {
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 300;
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 500;
 
     private final JTextArea log = new JTextArea();
     private final JPanel panelTop = new JPanel(new GridLayout(2, 3));
@@ -58,7 +58,9 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         scrollUsers.setPreferredSize(new Dimension(100, 0));
         cbAlwaysOnTop.addActionListener(this);
         btnLogin.addActionListener(this);
+        btnDisconnect.addActionListener(this); //lesson6
         btnSend.addActionListener(this);
+
         tfMessage.addActionListener(this);
 
         panelTop.add(tfIPAddress);
@@ -75,6 +77,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         add(scrollLog, BorderLayout.CENTER);
         add(panelBottom, BorderLayout.SOUTH);
         add(scrollUsers, BorderLayout.EAST);
+        visiblePanels(false); // lesson6
         setVisible(true);
     }
 
@@ -100,7 +103,11 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
         } else if (src == btnLogin || src == tfIPAddress || src == tfLogin || src == tfPassword || src == tfPort) {
             connect();
-        } else if (src == btnSend || src == tfMessage) {
+            visiblePanels(true);
+        }else if (src == btnDisconnect) {
+            disconnect();
+            visiblePanels(false);
+        }else if (src == btnSend || src == tfMessage) {
             sendMessage();
         } else {
             throw new RuntimeException("Unknown source: " + src);
@@ -116,6 +123,22 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         }
         socketThread = new SocketThread(this, "Client thread", socket);
     }
+
+    /*
+    * lesson6
+    * */
+
+    private void disconnect() {
+        socketThread.close();
+    }
+
+    private void visiblePanels(boolean flagConnect){
+        panelTop.setVisible(!flagConnect);
+        panelBottom.setVisible(flagConnect);
+    }
+    /*
+    * end lesson6*/
+
 
     void sendMessage() {
         String msg = tfMessage.getText();

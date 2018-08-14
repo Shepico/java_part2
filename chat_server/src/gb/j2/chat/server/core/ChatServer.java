@@ -7,11 +7,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 public class ChatServer implements ServerSocketThreadListener, SocketThreadListener{
 
     private ServerSocketThread server;
     private final DateFormat DATEFORMAT = new SimpleDateFormat("HH:mm:ss: ");
+
 
     public void start(int port){
         if (server !=null && server.isAlive()) {
@@ -70,7 +72,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     }
 
     /*
-     * Server thred events
+     * Socket thred events
      * */
 
     @Override
