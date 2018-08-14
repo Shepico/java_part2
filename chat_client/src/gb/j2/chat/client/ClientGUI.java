@@ -1,39 +1,39 @@
 package gb.j2.chat.client;
 
+import gb.j2.network.SocketThread;
+import gb.j2.network.SocketThreadListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Socket;
 
-//import java.awt.event.KeyAdapter;
-//import java.awt.event.KeyEvent;
+public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, SocketThreadListener {
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 300;
 
-public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler {
-    private final int Width = 1000;
-    private final int Height= 600;
-
-    private final JTextArea Log = new JTextArea();
-    private final JPanel Panel_Top = new JPanel(new GridLayout(2,3));
-    private final JTextField tfIPadress = new JTextField("127.0.0.1");
-    private final JTextField tfPort = new JTextField("8891");
-    private final JCheckBox cbAlwaysOnTop = new JCheckBox("Alaways top");
+    private final JTextArea log = new JTextArea();
+    private final JPanel panelTop = new JPanel(new GridLayout(2, 3));
+    private final JTextField tfIPAddress = new JTextField("127.0.0.1");
+    private final JTextField tfPort = new JTextField("8189");
+    private final JCheckBox cbAlwaysOnTop = new JCheckBox("Alwayson top");
     private final JTextField tfLogin = new JTextField("Pavel");
-    private final JPasswordField tfPass = new JPasswordField("123");
+    private final JPasswordField tfPassword = new JPasswordField("123");
     private final JButton btnLogin = new JButton("Login");
 
-    private final JPanel Panel_Bottom = new JPanel(new BorderLayout());
-    private final JButton btnDisconect = new JButton("Disconnect");
+    private final JPanel panelBottom = new JPanel(new BorderLayout());
+    private final JButton btnDisconnect = new JButton("<html><b>Disconnect</b></html>");
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSend = new JButton("Send");
 
-    private final JList<String> userList = new JList();
+    private final JList<String> userList = new JList<>();
+    private boolean shownIoErrors = false;
+    private SocketThread socketThread;
 
-
-
-
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -44,119 +44,140 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     private ClientGUI() {
         Thread.setDefaultUncaughtExceptionHandler(this);
-        String[] users = {"user1", "user2", "user3"};
-        userList.setListData(users);
-        //
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(new Dimension(Width, Height));
-        setTitle("Chat client");
         setLocationRelativeTo(null);
-        //
-        btnSend.addActionListener(this);
-        btnDisconect.addActionListener(this);
-        btnLogin.addActionListener(this);
-        cbAlwaysOnTop.addActionListener(this);
-        /*tfMessage.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    try {
-                        sendFile();
-                    }catch (IOException er) {
-                        throw new RuntimeException("Error output");
-                    }
-                    sendMessage();
-                }
-            }
-        });*/
-        tfMessage.addActionListener(this);
-        //
-        Log.setEditable(false);
-        JScrollPane scrollLog= new JScrollPane(Log);
-        JScrollPane scrollUsers = new JScrollPane(userList);
-        scrollUsers.setPreferredSize(new Dimension(200,0));
-        //
-        Panel_Top.add(tfIPadress);
-        Panel_Top.add(tfPort);
-        Panel_Top.add(cbAlwaysOnTop);
-        Panel_Top.add(btnLogin);
-        Panel_Top.add(tfPass);
-        Panel_Top.add(tfLogin);
-        Panel_Bottom.add(btnDisconect,BorderLayout.WEST);
-        Panel_Bottom.add(tfMessage,BorderLayout.CENTER);
-        Panel_Bottom.add(btnSend, BorderLayout.EAST);
-        //
-        add(Panel_Top,BorderLayout.NORTH);
-        add(scrollLog, BorderLayout.CENTER);
-        add(scrollUsers, BorderLayout.EAST);
-        add(Panel_Bottom, BorderLayout.SOUTH);
-        //
-        setVisible(true);
+        setSize(WIDTH, HEIGHT);
+        setTitle("Chat Client");
 
+        log.setEditable(false);
+        log.setLineWrap(true);
+        JScrollPane scrollLog = new JScrollPane(log);
+        JScrollPane scrollUsers = new JScrollPane(userList);
+        String[] users = {"user1_with_an_exceptionally_long_nickname", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"};
+        userList.setListData(users);
+        scrollUsers.setPreferredSize(new Dimension(100, 0));
+        cbAlwaysOnTop.addActionListener(this);
+        btnLogin.addActionListener(this);
+        btnSend.addActionListener(this);
+        tfMessage.addActionListener(this);
+
+        panelTop.add(tfIPAddress);
+        panelTop.add(tfPort);
+        panelTop.add(cbAlwaysOnTop);
+        panelTop.add(tfLogin);
+        panelTop.add(tfPassword);
+        panelTop.add(btnLogin);
+        panelBottom.add(btnDisconnect, BorderLayout.WEST);
+        panelBottom.add(tfMessage, BorderLayout.CENTER);
+        panelBottom.add(btnSend, BorderLayout.EAST);
+
+        add(panelTop, BorderLayout.NORTH);
+        add(scrollLog, BorderLayout.CENTER);
+        add(panelBottom, BorderLayout.SOUTH);
+        add(scrollUsers, BorderLayout.EAST);
+        setVisible(true);
+    }
+
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        e.printStackTrace();
+        String msg;
+        StackTraceElement[] ste = e.getStackTrace();
+        if (ste.length == 0)
+            msg = "Empty Stacktrace";
+        else {
+            msg = e.getClass().getCanonicalName() + ": " + e.getMessage() +
+                    "\n\t at " + ste[0];
+        }
+        JOptionPane.showMessageDialog(null, msg, "Exception", JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        if(src == cbAlwaysOnTop) {
+        if (src == cbAlwaysOnTop) {
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
-        }else if (src == btnSend || src == tfMessage) {
-            /*if (LOG.getText().equals("")){
-                LOG.append(tfMessage.getText());
-            }else {
-                LOG.append("\n" + tfMessage.getText());
-            }
-            tfMessage.setText("");*/
-            try {
-                sendFile();
-            } catch (IOException er) {
-                //er.printStackTrace();
-                throw new RuntimeException("Error output ");
-            }
+        } else if (src == btnLogin || src == tfIPAddress || src == tfLogin || src == tfPassword || src == tfPort) {
+            connect();
+        } else if (src == btnSend || src == tfMessage) {
             sendMessage();
-
-
-        }else {
+        } else {
             throw new RuntimeException("Unknown source: " + src);
         }
-
     }
 
-    private  void sendFile() throws IOException {
-        String msg = tfMessage.getText();
-        if ("".equals(msg)) return;  //Стандартный оборот, проверка на пустую строку
-        try(FileWriter out  = new FileWriter("log.txt",true)){
-            out.write(msg +"\n");
-            out.flush();
-
-        }catch (IOException e) {
-            JOptionPane.showMessageDialog(this,"Output error", "Alert",JOptionPane.ERROR_MESSAGE);
+    private void connect() {
+        Socket socket = null;
+        try {
+            socket = new Socket(tfIPAddress.getText(), Integer.parseInt(tfPort.getText()));
+        } catch (IOException e) {
+            log.append("Exception: " + e.getMessage());
         }
-
-        //можно проще
-        /*fs = new FillLogFile();
-        fs.saveFile(msg);
-        fs.close();*/
-
+        socketThread = new SocketThread(this, "Client thread", socket);
     }
 
-    private void sendMessage(){
-        //if (LOG.getText().equals("")){ //через LineSeparator сделал
+    void sendMessage() {
         String msg = tfMessage.getText();
-        if ("".equals(msg)) return;  //Стандартный оборот, проверка на пустую строку
-            Log.append(msg+System.lineSeparator());
-        /*}else {
-            LOG.append("\n" + tfMessage.getText());
-        }*/
-        tfMessage.setText("");
+        String username = tfLogin.getText();
+        if ("".equals(msg)) return;
+        tfMessage.setText(null);
+        tfMessage.requestFocusInWindow();
+        putLog(String.format("%s: %s", username, msg));
+//        wrtMsgToLogFile(msg, username);
+        socketThread.sendString(username + ":" + msg);
+    }
+
+    private void wrtMsgToLogFile(String msg, String username) {
+        try (FileWriter out = new FileWriter("log.txt", true)) {
+            out.write(username + ": " + msg + "\n");
+            out.flush();
+        } catch (IOException e) {
+            if (!shownIoErrors) {
+                shownIoErrors = true;
+                JOptionPane.showMessageDialog(this, "File write error", "Exception", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void putLog(String msg) {
+        if ("".equals(msg)) return;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                log.append(msg + "\n");
+                log.setCaretPosition(log.getDocument().getLength());
+            }
+        });
+    }
+
+    /**
+     * Socket Thread Events
+     * */
+
+    @Override
+    public void onStartSocketThread(SocketThread thread, Socket socket) {
+        putLog("socket thread start");
     }
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        String msg = e.getMessage();
-        JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-        System.exit(1);
+    public void onStopSocketThread(SocketThread thread) {
+        putLog("socket thread stop");
+    }
+
+    @Override
+    public void onReceiveString(SocketThread thread, Socket socket, String msg) {
+        putLog(msg);
+    }
+
+    @Override
+    public void onSocketThreadIsReady(SocketThread thread, Socket socket) {
+        putLog("socket is ready");
+    }
+
+    @Override
+    public void onSocketThreadException(SocketThread thread, Exception e) {
+        putLog("socket thread exception");
     }
 
 }

@@ -56,6 +56,7 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         String msg = "Что то пошло не так";
+        e.printStackTrace();
         JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
         System.exit(1);
     }

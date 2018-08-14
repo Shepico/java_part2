@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 public class ChatServer implements ServerSocketThreadListener, SocketThreadListener{
 
     private ServerSocketThread server;
-    private final DateFormat DATAFORMAT = new SimpleDateFormat("HH:mm:ss: ");
+    private final DateFormat DATEFORMAT = new SimpleDateFormat("HH:mm:ss: ");
 
     public void start(int port){
         if (server !=null && server.isAlive()) {
@@ -31,8 +31,8 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     }
 
     private void putLog(String msg){
-        msg = DATAFORMAT.format(System.currentTimeMillis() + Thread.currentThread().getName() + ":" + msg);
-        System.out.println(msg);
+        msg = DATEFORMAT.format(System.currentTimeMillis()) + Thread.currentThread().getName() + ":" + msg;
+            System.out.println(msg);
     }
     /**
      * Server socket thread events
