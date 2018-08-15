@@ -120,7 +120,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             log.append("Exception: " + e.getMessage());
         }
         socketThread = new SocketThread(this, "Client thread", socket);
-        visiblePanels(true);
+
     }
 
     /*
@@ -129,7 +129,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     private void disconnect() {
         socketThread.close();
-        visiblePanels(false);
+
     }
 
     private void visiblePanels(boolean flagConnect){
@@ -181,11 +181,13 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     @Override
     public void onStartSocketThread(SocketThread thread, Socket socket) {
         putLog("socket thread start");
+
     }
 
     @Override
     public void onStopSocketThread(SocketThread thread) {
         putLog("socket thread stop");
+        visiblePanels(false);
     }
 
     @Override
@@ -196,6 +198,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     @Override
     public void onSocketThreadIsReady(SocketThread thread, Socket socket) {
         putLog("socket is ready");
+        visiblePanels(true);
     }
 
     @Override

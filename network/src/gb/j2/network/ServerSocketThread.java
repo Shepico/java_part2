@@ -26,8 +26,8 @@ public class ServerSocketThread extends Thread {
            //System.out.println("Server started");
            LISTENER.onServerSockedCreated(this, server);
            server.setSoTimeout(TIMEOUT);
+           Socket socket;
             while (!isInterrupted()){
-                Socket socket;
                 try {
                     socket = server.accept();
                 }catch (SocketTimeoutException e){

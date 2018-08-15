@@ -79,7 +79,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public synchronized void onStartSocketThread(SocketThread thread, Socket socket) {
         putLog("Start socket thread");
-        arrThread.add(thread);
+
     }
 
     @Override
@@ -91,6 +91,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public synchronized void onSocketThreadIsReady(SocketThread thread, Socket socket) {
         putLog("Socket thread is ready");
+        arrThread.add(thread);
     }
 
     @Override
