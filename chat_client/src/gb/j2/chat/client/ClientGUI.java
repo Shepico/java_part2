@@ -147,7 +147,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         if ("".equals(msg)) return;
         tfMessage.setText(null);
         tfMessage.requestFocusInWindow();
-        putLog(String.format("%s", msg));
+        //putLog(String.format("%s", msg));
 //        wrtMsgToLogFile(msg, username);
         socketThread.sendString(username + ":" + msg);
     }
@@ -193,7 +193,32 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void onReceiveString(SocketThread thread, Socket socket, String msg) {
-        putLog(msg);
+
+        //putLog(msg);
+        String[] arr = msg.split(Messages.DELIMITER);
+        switch (arr[0]){
+            case Messages.AUTH_ACCEPT:{
+                putLog("Вы авторизованы " + arr[1]);
+                break;
+            }
+            case Messages.BROADCAST: {
+                //putLog("От:" + arr[2] + " всем: " + arr[3]);
+                putLog(arr[3]);
+                break;
+            }
+
+            case Messages.AUTH_ERROR: {
+                putLog(String.format("Не верное имя/пароль"));
+                break;
+            }
+
+
+        }
+       /* if (arr.length != 3 || !arr[0].equals(Messages.AUTH_REQUEST)) {
+            newClient.msgFormatError(msg);
+            return;
+        }
+        if ()*/
     }
 
     @Override
