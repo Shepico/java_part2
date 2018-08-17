@@ -1,0 +1,2 @@
+Class.forName("org.sqlite.JDBC"); - откуда выбираем по имени из Java или jdbc? - РАЗОБРАЛСЯ
+statement - Что такое?
