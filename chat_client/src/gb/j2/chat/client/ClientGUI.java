@@ -1,5 +1,6 @@
 package gb.j2.chat.client;
 
+import gb.j2.chat.library.Messages;
 import gb.j2.network.SocketThread;
 import gb.j2.network.SocketThreadListener;
 
@@ -146,7 +147,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         if ("".equals(msg)) return;
         tfMessage.setText(null);
         tfMessage.requestFocusInWindow();
-        putLog(String.format("%s: %s", username, msg));
+        putLog(String.format("%s", msg));
 //        wrtMsgToLogFile(msg, username);
         socketThread.sendString(username + ":" + msg);
     }
@@ -197,8 +198,10 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void onSocketThreadIsReady(SocketThread thread, Socket socket) {
-        putLog("socket is ready");
         visiblePanels(true);
+        String login = tfLogin.getText();
+        String password = new String(tfPassword.getPassword());
+        thread.sendString(Messages.getAuthRequest(login, password));
     }
 
     @Override
