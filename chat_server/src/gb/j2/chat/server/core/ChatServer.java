@@ -42,12 +42,14 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
      * **/
     @Override
     public void onServerThreadStart(ServerSocketThread thread) {
-        putLog("Server thread start");
+        putLog("server thread start");
+        SqlClient.connect();
     }
 
     @Override
     public void onServerThreadStop(ServerSocketThread thread) {
-        putLog("Server thread stop");
+        putLog("server thread stop");
+        SqlClient.disconnect();
     }
 
     @Override
