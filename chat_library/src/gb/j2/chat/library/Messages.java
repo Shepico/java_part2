@@ -14,6 +14,7 @@ public class Messages {
     public static final String AUTH_ERROR = "/auth_error";
     public static final String BROADCAST = "/bcast";
     public static final String MESSAGE_FORMAT_ERROR = "/msg_fmt_err";
+    public static final String USER_LIST = "/user_list";
 
     public static String getAuthRequest(String login, String password) {
         return AUTH_REQUEST + DELIMITER + login + DELIMITER + password;
@@ -35,5 +36,7 @@ public class Messages {
     public static String getMessageFormatError(String msg) {
         return MESSAGE_FORMAT_ERROR + DELIMITER + msg;
     }
+
+    public static String getUserList(String list) {        return USER_LIST + DELIMITER + list;    }
 
 }

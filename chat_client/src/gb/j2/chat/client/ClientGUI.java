@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, SocketThreadListener {
     private static final int WIDTH = 800;
@@ -149,7 +150,8 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         tfMessage.requestFocusInWindow();
         //putLog(String.format("%s", msg));
 //        wrtMsgToLogFile(msg, username);
-        socketThread.sendString(username + ":" + msg);
+        //socketThread.sendString(username + ":" + msg);
+        socketThread.sendString(msg);
     }
 
     private void wrtMsgToLogFile(String msg, String username) {
@@ -211,7 +213,13 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
                 putLog(String.format("Не верное имя/пароль"));
                 break;
             }
-
+            case Messages.USER_LIST: {
+                String users = msg.substring(Messages.USER_LIST.length() + Messages.DELIMITER.length());
+                String[] userArray = users.split(Messages.DELIMITER);
+                Arrays.sort(userArray);
+                userList.setListData(userArray);
+                break;
+            }
 
         }
        /* if (arr.length != 3 || !arr[0].equals(Messages.AUTH_REQUEST)) {
@@ -231,6 +239,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void onSocketThreadException(SocketThread thread, Exception e) {
+
         putLog("socket thread exception");
     }
 
