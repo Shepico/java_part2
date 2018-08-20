@@ -1,5 +1,6 @@
 package gb.j2.chat.client;
 
+import gb.j2.chat.library.Messages;
 import gb.j2.network.SocketThread;
 import gb.j2.network.SocketThreadListener;
 
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, SocketThreadListener {
     private static final int WIDTH = 800;
@@ -146,9 +148,10 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         if ("".equals(msg)) return;
         tfMessage.setText(null);
         tfMessage.requestFocusInWindow();
-        putLog(String.format("%s: %s", username, msg));
+        //putLog(String.format("%s", msg));
 //        wrtMsgToLogFile(msg, username);
-        socketThread.sendString(username + ":" + msg);
+        //socketThread.sendString(username + ":" + msg);
+        socketThread.sendString(msg);
     }
 
     private void wrtMsgToLogFile(String msg, String username) {
@@ -192,17 +195,51 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void onReceiveString(SocketThread thread, Socket socket, String msg) {
-        putLog(msg);
+
+        //putLog(msg);
+        String[] arr = msg.split(Messages.DELIMITER);
+        switch (arr[0]){
+            case Messages.AUTH_ACCEPT:{
+                putLog("Вы авторизованы " + arr[1]);
+                break;
+            }
+            case Messages.BROADCAST: {
+                //putLog("От:" + arr[2] + " всем: " + arr[3]);
+                putLog(arr[3]);
+                break;
+            }
+
+            case Messages.AUTH_ERROR: {
+                putLog(String.format("Не верное имя/пароль"));
+                break;
+            }
+            case Messages.USER_LIST: {
+                String users = msg.substring(Messages.USER_LIST.length() + Messages.DELIMITER.length());
+                String[] userArray = users.split(Messages.DELIMITER);
+                Arrays.sort(userArray);
+                userList.setListData(userArray);
+                break;
+            }
+
+        }
+       /* if (arr.length != 3 || !arr[0].equals(Messages.AUTH_REQUEST)) {
+            newClient.msgFormatError(msg);
+            return;
+        }
+        if ()*/
     }
 
     @Override
     public void onSocketThreadIsReady(SocketThread thread, Socket socket) {
-        putLog("socket is ready");
         visiblePanels(true);
+        String login = tfLogin.getText();
+        String password = new String(tfPassword.getPassword());
+        thread.sendString(Messages.getAuthRequest(login, password));
     }
 
     @Override
     public void onSocketThreadException(SocketThread thread, Exception e) {
+
         putLog("socket thread exception");
     }
 
