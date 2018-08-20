@@ -17,7 +17,11 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     private ServerSocketThread server;
     private final DateFormat DATEFORMAT = new SimpleDateFormat("HH:mm:ss: ");
     private Vector<SocketThread> clients = new Vector<>(); //lesson6
+    private ChatServerListener listener;
 
+    public ChatServer(ChatServerListener listener){
+        this.listener =listener;
+    }
 
     public void start(int port){
         if (server !=null && server.isAlive()) {
@@ -38,7 +42,8 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     private void putLog(String msg){
         msg = DATEFORMAT.format(System.currentTimeMillis()) + Thread.currentThread().getName() + ":" + msg;
-            System.out.println(msg);
+        //System.out.println(msg);
+        listener.onChatServerMessage(msg);
     }
     /**
      * Server socket thread events
