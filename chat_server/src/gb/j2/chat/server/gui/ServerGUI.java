@@ -45,6 +45,7 @@ public class ServerGUI extends JFrame implements ActionListener, ChatServerListe
         PANEL.setLayout(new BorderLayout());
         PANEL.add(PANEL_BTN,BorderLayout.NORTH);
         LOG.setLineWrap(true);
+        LOG.setCaretPosition(LOG.getDocument().getLength());
         PANEL.add(LOG,BorderLayout.SOUTH);
         add(PANEL);
 

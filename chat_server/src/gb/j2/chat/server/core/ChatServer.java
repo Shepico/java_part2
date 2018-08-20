@@ -94,8 +94,12 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     @Override
     public synchronized void onStopSocketThread(SocketThread thread) {
-        putLog("Stop socket thread");
-        clients.remove(thread);//lesson6
+        ClientThread client = (ClientThread) thread;
+        clients.remove(thread);
+        if (client.isAuthorized() && !client.isReconnect()) {
+            sendToAuthorizedClients(Messages.getBroadcast("Server", client.getNickname() + " disconnected"));
+            sendToAuthorizedClients(Messages.getUserList(getUsers()));
+        }
     }
 
     @Override
@@ -119,6 +123,16 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         putLog("Socket thread exception");
     }
 
+    private String getUsers() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < clients.size(); i++) {
+            ClientThread client = (ClientThread) clients.get(i);
+            if (!client.isAuthorized()) continue;
+            sb.append(client.getNickname()).append(Messages.DELIMITER);
+        }
+        return sb.toString();
+    }
+
     private void handleAuthMsg(ClientThread thread, String msg) {
         sendToAuthorizedClients(Messages.getBroadcast(thread.getName(), msg));
     }
@@ -136,9 +150,16 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
             putLog(String.format("Invalid login/password: login='%s', password='%s'", login, password));
             newClient.authError();
         } else {
+            ClientThread client = findClientThreadByNickname(nickname);
             newClient.authAccept(nickname);
-            sendToAuthorizedClients(Messages.getBroadcast("Server", nickname + " connected"));
+            if (client == null)
+                sendToAuthorizedClients(Messages.getBroadcast("Server", nickname + " connected"));
+            else {
+                client.reconnect();
+                clients.remove(client);
+            }
         }
+        sendToAuthorizedClients(Messages.getUserList(getUsers()));
     }
 
     private void sendToAuthorizedClients(String msg) {
@@ -147,6 +168,16 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
             if (!client.isAuthorized()) continue;
             client.sendString(msg);
         }
+    }
+
+    private synchronized ClientThread findClientThreadByNickname(String nickname) {
+        for (int i = 0; i < clients.size(); i++) {
+            ClientThread client = (ClientThread) clients.get(i);
+            if (!client.isAuthorized()) continue;
+            if (client.getNickname().equals(nickname))
+                return client;
+        }
+        return null;
     }
 
 }

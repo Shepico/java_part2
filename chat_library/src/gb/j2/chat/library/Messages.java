@@ -7,6 +7,7 @@ public class Messages {
        /auth_accept§nickname
        /auth_error
        /msg_format_error§<message>
+       /user_list§user1§user2§user3
     */
     public static final String DELIMITER = "§";
     public static final String AUTH_REQUEST = "/auth_request";
