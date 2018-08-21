@@ -6,15 +6,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ServerGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler {
-    private final int POS_X = 800;
-    private final int POS_Y = 400;
-    private final int WIDTH = 250;
-    private final int HEIGHT = 100;
+public class ServerGUI extends JFrame implements ActionListener, ChatServerListener, Thread.UncaughtExceptionHandler {
+    private final int POS_X = 500;
+    private final int POS_Y = 300;
+    private final int WIDTH = 600;
+    private final int HEIGHT = 400;
 
-    private final ChatServer CHATSERVER = new ChatServer();
+    private final ChatServer CHATSERVER = new ChatServer(this);
     private final JButton BTNSTART = new JButton("Start");
     private final JButton BTNSTOP = new JButton("Stop");
+    private final JPanel PANEL = new JPanel();
+    private final JPanel PANEL_BTN = new JPanel();
+    private final JTextArea LOG = new JTextArea();
 
     public static void main (String[] args){
         SwingUtilities.invokeLater(new Runnable() {
@@ -32,11 +35,22 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
         setResizable(false);
         setTitle("Chat server");
         setAlwaysOnTop(true);
-        setLayout(new GridLayout(1,2));
         BTNSTART.addActionListener(this);
         BTNSTOP.addActionListener(this);
-        add(BTNSTART);
-        add(BTNSTOP);
+        //
+        //setLayout(new GridLayout(1,2));
+        PANEL_BTN.setLayout(new GridLayout(1,2));
+        PANEL_BTN.add(BTNSTART);
+        PANEL_BTN.add(BTNSTOP);
+        PANEL.setLayout(new BorderLayout());
+        PANEL.add(PANEL_BTN,BorderLayout.NORTH);
+        LOG.setLineWrap(true);
+        LOG.setCaretPosition(LOG.getDocument().getLength());
+        PANEL.add(LOG,BorderLayout.SOUTH);
+        add(PANEL);
+
+        //add(BTNSTART);
+        //add(BTNSTOP);
         setVisible(true);
     }
 
@@ -48,7 +62,7 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
         //    throw new ArithmeticException();
         }else if (src == BTNSTOP) {
             CHATSERVER.stop();
-            System.exit(0);
+            //System.exit(0);
         }
 
     }
@@ -56,8 +70,17 @@ public class ServerGUI extends JFrame implements ActionListener, Thread.Uncaught
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         String msg = "Что то пошло не так";
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-        System.exit(1);
+        LOG.append(msg + ": " + e.toString());
+        //e.printStackTrace();
+        //JOptionPane.showMessageDialog(this, msg, "Alert", JOptionPane.ERROR_MESSAGE);
+        //System.exit(1);
+    }
+
+    @Override
+    public void onChatServerMessage(String msg) {
+        SwingUtilities.invokeLater(() -> {
+            LOG.append(msg + "\n");
+            LOG.setCaretPosition(LOG.getDocument().getLength());
+        });
     }
 }
